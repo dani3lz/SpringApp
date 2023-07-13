@@ -17,7 +17,7 @@ public class Users {
     Long id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    String email;
 
     @Column(nullable = false)
     String password;
@@ -29,7 +29,7 @@ public class Users {
     String lastName;
 
     @Column(nullable = false)
-    String email;
+    String birthday;
 
     @Column(nullable = false)
     String phone;

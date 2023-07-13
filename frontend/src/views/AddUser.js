@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-export default function RegisterForm() {
+export default function AddUser() {
     const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
     const fullTextFieldStyle = { width: '100%', margin: '10px auto' }
     const halfTextFieldStyle = { width: '100%', margin: '10px auto' }
-    const infoStyle = { width: '100%', margin: '10px auto', padding: '15px 0px 0px 0px' }
+
+    const navigate = useNavigate();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -32,7 +34,18 @@ export default function RegisterForm() {
                 country,
                 city
             }
-            console.log(user)
+            
+            fetch("http://localhost:8080/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(user)
+            }).then(()=>{
+                navigate("/")
+            })
+            .catch((error) => {
+                console.error("Error sending user data");
+              });
+
         } else {
             console.log("Password not match.")
         }
@@ -41,7 +54,7 @@ export default function RegisterForm() {
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1>REGISTER</h1>
+                <h1>ADD USER</h1>
                 <Box
                     component="form"
                     sx={{
@@ -144,11 +157,9 @@ export default function RegisterForm() {
                             />
                         </Grid>
                         <Grid item xs={24}>
-                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Submit</Button>
+                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Save</Button>
                         </Grid>
                     </Grid>
-                    <div style={infoStyle}>Already have an account? <a href='/login'>Login here.</a></div>
-
                 </Box>
             </Paper>
         </Container>

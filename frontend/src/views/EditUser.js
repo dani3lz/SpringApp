@@ -2,46 +2,56 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function RegisterForm() {
+export default function EditUser() {
     const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
     const fullTextFieldStyle = { width: '100%', margin: '10px auto' }
     const halfTextFieldStyle = { width: '100%', margin: '10px auto' }
-    const infoStyle = { width: '100%', margin: '10px auto', padding: '15px 0px 0px 0px' }
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [birthday, setBirthday] = useState('');
-    const [phone, setPhone] = useState('');
-    const [country, setCountry] = useState('');
-    const [city, setCity] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
+
+    const location = useLocation();
+    const { selectedRows } = location.state;
+    const emailSelected = selectedRows[0].email;
+
+    const [firstName, setFirstName] = useState(selectedRows[0].firstName);
+    const [lastName, setLastName] = useState(selectedRows[0].lastName);
+    const [email, setEmail] = useState(selectedRows[0].email);
+    const [birthday, setBirthday] = useState(selectedRows[0].birthday);
+    const [phone, setPhone] = useState(selectedRows[0].phone);
+    const [country, setCountry] = useState(selectedRows[0].country);
+    const [city, setCity] = useState(selectedRows[0].city);
 
     const handleClick = (e) => {
         e.preventDefault()
-        if (password === confirmPassword) {
-            const user = {
-                email,
-                password,
-                firstName,
-                lastName,
-                birthday,
-                phone,
-                country,
-                city
-            }
-            console.log(user)
-        } else {
-            console.log("Password not match.")
+        const user = {
+            email,
+            firstName,
+            lastName,
+            birthday,
+            phone,
+            country,
+            city
         }
+        console.log(user)
+
+        fetch("http://localhost:8080/users/" + emailSelected, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        }).then(() => {
+            navigate("/")
+        })
+            .catch((error) => {
+                console.error("Error sending user data");
+            });
     }
 
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1>REGISTER</h1>
+                <h1>EDIT USER</h1>
                 <Box
                     component="form"
                     sx={{
@@ -121,34 +131,10 @@ export default function RegisterForm() {
                                 onChange={(e) => setCity(e.target.value)}
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="password-input"
-                                label="Password"
-                                variant="outlined"
-                                type="password"
-                                style={halfTextFieldStyle}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="confirm-password-input"
-                                label="Confirm password"
-                                variant="outlined"
-                                type="password"
-                                style={halfTextFieldStyle}
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </Grid>
                         <Grid item xs={24}>
-                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Submit</Button>
+                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Save</Button>
                         </Grid>
                     </Grid>
-                    <div style={infoStyle}>Already have an account? <a href='/login'>Login here.</a></div>
-
                 </Box>
             </Paper>
         </Container>

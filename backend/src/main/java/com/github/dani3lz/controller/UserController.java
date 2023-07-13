@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import javax.transaction.Transactional;
 import java.util.List;
 
+
+@CrossOrigin
 @Transactional
 @RestController
 @RequestMapping("/users")
@@ -23,18 +25,24 @@ public class UserController {
         return userService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public UsersDTO getById(@PathVariable("id") Long id){
-        return userService.getById(id);
+    @GetMapping("/{email}")
+    public UsersDTO getByEmail(@PathVariable("email") final String email){
+        return userService.getByEmail(email);
     }
 
     @PostMapping
-    public UsersDTO save(@Valid @RequestBody Users user){
+    public UsersDTO save(@Valid @RequestBody final Users user){
         return userService.save(user);
     }
 
-    @DeleteMapping("/{username}")
-    public UsersDTO delete(@PathVariable("username") String username){
-        return userService.delete(username);
+    @PutMapping("/{email}")
+    public UsersDTO edit(@PathVariable final String email,
+                         @Valid @RequestBody final UsersDTO usersDTO){
+        return userService.edit(email, usersDTO);
+    }
+
+    @DeleteMapping("/{email}")
+    public UsersDTO delete(@PathVariable("email") final String email){
+        return userService.delete(email);
     }
 }

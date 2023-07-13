@@ -1,8 +1,9 @@
 import React from 'react'
+import CustomTable from '../components/CustomTable'
 
 function Home() {
   return (
-    <h2>Home Page!</h2>
+    <CustomTable />
   )
 }
 

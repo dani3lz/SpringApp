@@ -5,8 +5,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
+import java_logo from '../img/java_logo.png'
+import react_logo from '../img/react_logo.png'
 
 export default function MyAppBar() {
 
@@ -32,10 +34,13 @@ export default function MyAppBar() {
             sx={{ mr: 2 }}
             onClick={routeChangeToHome}
           >
-            <MenuIcon />
+            <HomeIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Home
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={java_logo} alt='Java' style={{height: '40px', marginRight: '5px', marginBottom: '5px'}}/>
+            <span>Java Spring + </span>
+            <img src={react_logo} alt='React JS' style={{height: '30px', marginRight: '5px', marginBottom: '0px', marginLeft: '5px'}}/>
+            <span>React JS</span>
           </Typography>
           <Button onClick={routeChangeToLogin} color="inherit">Login</Button>
         </Toolbar>
