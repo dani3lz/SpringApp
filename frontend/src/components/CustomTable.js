@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Container, Paper, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { request } from '../axios_helper'
 
 const columns = [
   { field: 'number', headerName: 'Nr.', width: 90 },
@@ -21,15 +22,16 @@ export default function CustomTable() {
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/users")
-      .then(res => res.json())
-      .then((result) => {
-        setUsers(result);
-      })
-      .catch((error) => {
-        console.error("Error fetching users");
-        setUsers([]);
-      });
+    request(
+      "GET",
+      "/users",
+      {}
+    ).then((response) => {
+      setUsers(response.data)
+    }).catch((error) => {
+      console.error("Error fetching users");
+      setUsers([]);
+    });
   }, [seed])
 
   const rows = users;
@@ -61,7 +63,11 @@ export default function CustomTable() {
 
   const handleDeleteClick = (e) => {
     e.preventDefault()
-    navigate('/delete');
+    if (selectedRows.length > 0) {
+      navigate('/delete', { state: { selectedRows } });
+    } else {
+      console.log("Select row");
+    }
   }
 
   const paperStyle = { padding: '20px 20px', width: '100%', margin: '50px auto' }

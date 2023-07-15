@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
+import { request, setAuthToken } from '../axios_helper'
+import { useNavigate } from 'react-router-dom';
 
 export default function RegisterForm() {
     const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
@@ -19,20 +21,30 @@ export default function RegisterForm() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    const navigate = useNavigate();
+
     const handleClick = (e) => {
         e.preventDefault()
         if (password === confirmPassword) {
-            const user = {
-                email,
-                password,
-                firstName,
-                lastName,
-                birthday,
-                phone,
-                country,
-                city
-            }
-            console.log(user)
+            request(
+                "POST",
+                "/auth/register",
+                {
+                    email: email,
+                    password: password,
+                    firstName: firstName,
+                    lastName: lastName,
+                    birthday: birthday,
+                    phone: phone,
+                    country: country,
+                    city: city
+                }
+            ).then((response) => {
+                setAuthToken(response.data.token);
+                navigate('/');
+            }).catch((error) => {
+                console.error("Error sending data");
+            });
         } else {
             console.log("Password not match.")
         }

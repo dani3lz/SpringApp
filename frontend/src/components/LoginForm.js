@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button } from '@mui/material';
+import { request, setAuthToken } from '../axios_helper'
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
     const paperStyle = { padding: '50px 50px', width: 350, margin: '200px auto' }
@@ -11,10 +13,24 @@ export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleClick = (e) =>{
+    const navigate = useNavigate();
+
+    const handleClick = (e) => {
         e.preventDefault()
-        const user = {email, password}
-        console.log(user)
+        request(
+            "POST",
+            "/auth/login",
+            {
+                email: email,
+                password: password
+            }
+        ).then((response) => {
+            setAuthToken(response.data.token);
+            navigate('/');
+        }).catch((error) => {
+            console.error("Error sending data");
+
+        });
     }
 
     return (

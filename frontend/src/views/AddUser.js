@@ -3,6 +3,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { request } from '../axios_helper'
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 export default function AddUser() {
     const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
@@ -24,37 +27,55 @@ export default function AddUser() {
     const handleClick = (e) => {
         e.preventDefault()
         if (password === confirmPassword) {
-            const user = {
-                email,
-                password,
-                firstName,
-                lastName,
-                birthday,
-                phone,
-                country,
-                city
-            }
-            
-            fetch("http://localhost:8080/users", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(user)
-            }).then(()=>{
-                navigate("/")
-            })
-            .catch((error) => {
-                console.error("Error sending user data");
-              });
-
+            request(
+                "POST",
+                "/auth/register",
+                {
+                    email: email,
+                    password: password,
+                    firstName: firstName,
+                    lastName: lastName,
+                    birthday: birthday,
+                    phone: phone,
+                    country: country,
+                    city: city
+                }
+            ).then((response) => {
+                navigate('/admin');
+            }).catch((error) => {
+                console.error("Error sending data");
+            });
         } else {
             console.log("Password not match.")
         }
     }
 
+    const handleBackClick = (e) => {
+        e.preventDefault()
+        navigate(-1);
+    }
+
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1>ADD USER</h1>
+                <Grid container spacing={0} columns={3} style={{ width: '100%', margin: "0", marginBottom: '15px' }}>
+                    <Grid item xs={1}>
+                        <IconButton
+                            size="medium"
+                            edge="start"
+                            color="inherit"
+                            aria-label="paper"
+                            style={{ float: 'left' }}
+                            sx={{ mr: 2 }}
+                            onClick={handleBackClick}
+                        >
+                            <ArrowBackIosIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <h1 style={{ margin: 0 }}>ADD USER</h1>
+                    </Grid>
+                </Grid>
                 <Box
                     component="form"
                     sx={{
