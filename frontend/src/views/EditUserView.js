@@ -2,58 +2,78 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
-import { request, setAuthToken } from '../axios_helper'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { request } from '../axios_helper'
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-export default function RegisterForm() {
+export default function EditUserView() {
     const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
     const fullTextFieldStyle = { width: '100%', margin: '10px auto' }
     const halfTextFieldStyle = { width: '100%', margin: '10px auto' }
-    const infoStyle = { width: '100%', margin: '10px auto', padding: '15px 0px 0px 0px' }
-
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [birthday, setBirthday] = useState('');
-    const [phone, setPhone] = useState('');
-    const [country, setCountry] = useState('');
-    const [city, setCity] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
 
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const { selectedRows } = location.state;
+    const emailSelected = selectedRows[0].email;
+
+    const [firstName, setFirstName] = useState(selectedRows[0].firstName);
+    const [lastName, setLastName] = useState(selectedRows[0].lastName);
+    const [email, setEmail] = useState(selectedRows[0].email);
+    const [birthday, setBirthday] = useState(selectedRows[0].birthday);
+    const [phone, setPhone] = useState(selectedRows[0].phone);
+    const [country, setCountry] = useState(selectedRows[0].country);
+    const [city, setCity] = useState(selectedRows[0].city);
+
     const handleClick = (e) => {
         e.preventDefault()
-        if (password === confirmPassword) {
-            request(
-                "POST",
-                "/auth/register",
-                {
-                    email: email,
-                    password: password,
-                    firstName: firstName,
-                    lastName: lastName,
-                    birthday: birthday,
-                    phone: phone,
-                    country: country,
-                    city: city
-                }
-            ).then((response) => {
-                setAuthToken(response.data.token);
-                navigate('/');
-            }).catch((error) => {
-                console.error("Error sending data");
-            });
-        } else {
-            console.log("Password not match.")
-        }
+        request(
+            "PUT",
+            "/users/" + emailSelected,
+            {
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                birthday: birthday,
+                phone: phone,
+                country: country,
+                city: city
+            }
+        ).then((response) => {
+            navigate('/admin');
+        }).catch((error) => {
+            console.error("Error sending data");
+
+        });
+    }
+
+    const handleBackClick = (e) => {
+        e.preventDefault()
+        navigate(-1);
     }
 
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1>REGISTER</h1>
+                <Grid container spacing={0} columns={3} style={{ width: '100%', margin: "0", marginBottom: '15px' }}>
+                    <Grid item xs={1}>
+                        <IconButton
+                            size="medium"
+                            edge="start"
+                            color="inherit"
+                            aria-label="paper"
+                            style={{ float: 'left' }}
+                            sx={{ mr: 2 }}
+                            onClick={handleBackClick}
+                        >
+                            <ArrowBackIosIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <h1 style={{ margin: 0 }}>EDIT USER</h1>
+                    </Grid>
+                </Grid>
                 <Box
                     component="form"
                     sx={{
@@ -133,34 +153,10 @@ export default function RegisterForm() {
                                 onChange={(e) => setCity(e.target.value)}
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="password-input"
-                                label="Password"
-                                variant="outlined"
-                                type="password"
-                                style={halfTextFieldStyle}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="confirm-password-input"
-                                label="Confirm password"
-                                variant="outlined"
-                                type="password"
-                                style={halfTextFieldStyle}
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </Grid>
                         <Grid item xs={24}>
-                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Submit</Button>
+                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Save</Button>
                         </Grid>
                     </Grid>
-                    <div style={infoStyle}>Already have an account? <a href='/login'>Login here.</a></div>
-
                 </Box>
             </Paper>
         </Container>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { request } from '../axios_helper'
 
-function Profile() {
+function ProfileView() {
 
     const[userEmail, setUserEmail] = useState("");
 
@@ -25,4 +25,4 @@ function Profile() {
   )
 }
 
-export default Profile
+export default ProfileView

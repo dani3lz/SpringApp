@@ -7,7 +7,7 @@ import { request } from '../axios_helper'
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-export default function DeleteUser() {
+export default function DeleteUserView() {
     const paperStyle = { padding: '50px 50px', width: 594, margin: '200px auto' }
     const textFieldStyle = { width: '100%', margin: '10px auto' }
 

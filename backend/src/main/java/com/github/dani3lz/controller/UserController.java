@@ -1,7 +1,6 @@
 package com.github.dani3lz.controller;
 
 import com.github.dani3lz.model.Role;
-import com.github.dani3lz.model.User;
 import com.github.dani3lz.model.dto.UserDTO;
 import com.github.dani3lz.service.RoleService;
 import com.github.dani3lz.service.UserService;

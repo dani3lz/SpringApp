@@ -5,8 +5,8 @@ import { Container, Paper, Button } from '@mui/material';
 import { request, setAuthToken } from '../axios_helper'
 import { useNavigate } from 'react-router-dom';
 
-export default function LoginForm() {
-    const paperStyle = { padding: '50px 50px', width: 350, margin: '200px auto' }
+function LoginView() {
+  const paperStyle = { padding: '50px 50px', width: 350, margin: '200px auto' }
     const textFieldStyle = { width: '100%', margin: '10px auto' }
     const infoStyle = { width: '100%', margin: '10px auto', padding: '15px 0px 0px 0px' }
 
@@ -32,9 +32,8 @@ export default function LoginForm() {
 
         });
     }
-
-    return (
-        <Container>
+  return (
+    <Container>
             <Paper elevation={3} style={paperStyle}>
                 <h1>LOGIN</h1>
                 <Box
@@ -66,5 +65,7 @@ export default function LoginForm() {
                 </Box>
             </Paper>
         </Container>
-    );
+  )
 }
+
+export default LoginView

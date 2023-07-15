@@ -7,8 +7,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
-import java_logo from '../img/java_logo.png'
-import react_logo from '../img/react_logo.png'
+import java_logo from './img/java_logo.png'
+import react_logo from './img/react_logo.png'
 import { getAuthToken, deleteAuthToken } from '../axios_helper'
 
 export default function MyAppBar() {

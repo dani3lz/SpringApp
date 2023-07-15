@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { getAuthToken } from '../axios_helper'
+import { getAuthToken } from '../../axios_helper'
 
 const PrivateRoute = () => {
     const auth = getAuthToken() !== null && getAuthToken() !== "null";

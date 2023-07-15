@@ -1,22 +1,22 @@
 import './App.css';
-import MyAppBar from './components/MyAppBar'
+import MenuBar from './components/MenuBar'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './views/Home';
-import Profile from './views/Profile';
-import Login from './views/Login';
-import Register from './views/Register';
-import AddUser from './views/AddUser';
-import EditUser from './views/EditUser';
-import DeleteUser from './views/DeleteUser';
-import ViewAllUsers from './views/ViewAllUsers';
-import PrivateRoute from './components/PrivateRoute';
-import AdminRoute from './components/AdminRoute';
+import Home from './views/HomeView';
+import Profile from './views/ProfileView';
+import Login from './views/LoginView';
+import Register from './views/RegisterView';
+import AddUser from './views/AddUserView';
+import EditUser from './views/EditUserView';
+import DeleteUser from './views/DeleteUserView';
+import ViewAllUsers from './views/ViewAllUsersView';
+import PrivateRoute from './components/routes/PrivateRoute';
+import AdminRoute from './components/routes/AdminRoute';
 
 function App() {
   return (
     <div className="App"> 
       <Router>
-        <MyAppBar/>
+        <MenuBar/>
         <Routes>
 
           <Route path='/' exact element={<Home/>}/>

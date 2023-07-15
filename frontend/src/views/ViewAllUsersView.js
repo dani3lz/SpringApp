@@ -1,10 +1,10 @@
 import React from 'react'
 import CustomTable from '../components/CustomTable'
 
-function ViewAllUsers() {
+function ViewAllUsersView() {
   return (
     <CustomTable />
   )
 }
 
-export default ViewAllUsers
+export default ViewAllUsersView

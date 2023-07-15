@@ -2,17 +2,15 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button, Grid } from '@mui/material';
+import { request, setAuthToken } from '../axios_helper'
 import { useNavigate } from 'react-router-dom';
-import { request } from '../axios_helper'
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-export default function AddUser() {
-    const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
+
+function RegisterView() {
+  const paperStyle = { padding: '50px 50px', width: 500, margin: '80px auto' }
     const fullTextFieldStyle = { width: '100%', margin: '10px auto' }
     const halfTextFieldStyle = { width: '100%', margin: '10px auto' }
-
-    const navigate = useNavigate();
+    const infoStyle = { width: '100%', margin: '10px auto', padding: '15px 0px 0px 0px' }
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -23,6 +21,8 @@ export default function AddUser() {
     const [city, setCity] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const navigate = useNavigate();
 
     const handleClick = (e) => {
         e.preventDefault()
@@ -41,7 +41,8 @@ export default function AddUser() {
                     city: city
                 }
             ).then((response) => {
-                navigate('/admin');
+                setAuthToken(response.data.token);
+                navigate('/');
             }).catch((error) => {
                 console.error("Error sending data");
             });
@@ -49,33 +50,10 @@ export default function AddUser() {
             console.log("Password not match.")
         }
     }
-
-    const handleBackClick = (e) => {
-        e.preventDefault()
-        navigate(-1);
-    }
-
-    return (
-        <Container>
+  return (
+    <Container>
             <Paper elevation={3} style={paperStyle}>
-                <Grid container spacing={0} columns={3} style={{ width: '100%', margin: "0", marginBottom: '15px' }}>
-                    <Grid item xs={1}>
-                        <IconButton
-                            size="medium"
-                            edge="start"
-                            color="inherit"
-                            aria-label="paper"
-                            style={{ float: 'left' }}
-                            sx={{ mr: 2 }}
-                            onClick={handleBackClick}
-                        >
-                            <ArrowBackIosIcon />
-                        </IconButton>
-                    </Grid>
-                    <Grid item xs={1}>
-                        <h1 style={{ margin: 0 }}>ADD USER</h1>
-                    </Grid>
-                </Grid>
+                <h1>REGISTER</h1>
                 <Box
                     component="form"
                     sx={{
@@ -178,11 +156,15 @@ export default function AddUser() {
                             />
                         </Grid>
                         <Grid item xs={24}>
-                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Save</Button>
+                            <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Submit</Button>
                         </Grid>
                     </Grid>
+                    <div style={infoStyle}>Already have an account? <a href='/login'>Login here.</a></div>
+
                 </Box>
             </Paper>
         </Container>
-    );
+  )
 }
+
+export default RegisterView
