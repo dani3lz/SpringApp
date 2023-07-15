@@ -1,12 +1,9 @@
 package com.github.dani3lz.service;
 
-import com.github.dani3lz.model.Role;
 import com.github.dani3lz.model.User;
 import com.github.dani3lz.model.dto.UserDTO;
-import com.github.dani3lz.repository.RoleRepository;
 import com.github.dani3lz.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 public class UserService implements Validator, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final ModelMapper mapper;
 
     public List<User> getAll() {
         List<User> userList = new ArrayList<>();
@@ -34,18 +31,6 @@ public class UserService implements Validator, UserDetailsService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with this email."));
-    }
-
-    public User save(User user) {
-        if (validate(mapper.map(user, UserDTO.class))) {
-            if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
-                user.setRoles(new HashSet<>(Collections.singletonList(roleRepository.findByName("ROLE_USER")
-                        .orElseThrow(() -> new RuntimeException("This role not exists")))));
-                return userRepository.save(user);
-            }
-            throw new RuntimeException("User with this email already exists.");
-        }
-        throw new RuntimeException("All fields are required.");
     }
 
     public User edit(String email, UserDTO userDTO) {
@@ -74,22 +59,6 @@ public class UserService implements Validator, UserDetailsService {
         userRepository.delete(userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with this email.")));
         return "User was deleted successfully.";
-    }
-
-    public User changeRole(String email, String newRole) {
-        User user = findByEmail(email);
-        user.setRoles(new HashSet<>(Collections.singletonList(roleRepository.findByName(newRole)
-                .orElseThrow(() -> new RuntimeException("This role not exists.")))));
-        return userRepository.save(user);
-    }
-
-    public String createRole(String role){
-        if(roleRepository.findByName(role).isPresent()){
-            return String.format("Role: '%s' already exists.", role);
-        } else {
-            roleRepository.save(new Role(role));
-            return String.format("Role: '%s' was created successfully.", role);
-        }
     }
 
     @Override

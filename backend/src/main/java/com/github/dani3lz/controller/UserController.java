@@ -3,6 +3,7 @@ package com.github.dani3lz.controller;
 import com.github.dani3lz.model.Role;
 import com.github.dani3lz.model.User;
 import com.github.dani3lz.model.dto.UserDTO;
+import com.github.dani3lz.service.RoleService;
 import com.github.dani3lz.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final RoleService roleService;
     private final ModelMapper mapper;
 
     @GetMapping
@@ -56,11 +58,16 @@ public class UserController {
     @PutMapping("/{email}/role")
     public ResponseEntity<UserDTO> changeRole(@PathVariable(name = "email") final String email,
                                               @RequestBody final Role newRole) {
-        return ResponseEntity.ok(mapper.map(userService.changeRole(email, newRole.getName()), UserDTO.class));
+        return ResponseEntity.ok(mapper.map(roleService.changeRole(email, newRole.getName()), UserDTO.class));
     }
 
     @PostMapping("/role")
     public String createRole(@RequestBody final Role role){
-        return userService.createRole(role.getName());
+        return roleService.createRole(role.getName());
+    }
+
+    @DeleteMapping("/role")
+    public String deleteRole(@RequestBody final Role role){
+        return roleService.deleteRole(role.getName());
     }
 }

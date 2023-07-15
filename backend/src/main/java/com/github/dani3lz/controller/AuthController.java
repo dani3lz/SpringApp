@@ -7,6 +7,7 @@ import com.github.dani3lz.model.dto.JwtRequest;
 import com.github.dani3lz.model.dto.JwtResponse;
 import com.github.dani3lz.model.dto.RegisterUserDTO;
 import com.github.dani3lz.model.dto.UserDTO;
+import com.github.dani3lz.service.AuthService;
 import com.github.dani3lz.service.UserService;
 import com.github.dani3lz.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,40 +30,16 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    private final UserService userService;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final AuthService authService;
     private final ModelMapper mapper;
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthToken(@RequestBody final JwtRequest authRequest){
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authRequest.getEmail(),
-                    authRequest.getPassword()
-            ));
-        } catch (BadCredentialsException e){
-            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(),
-                    "Incorrect email or password"),
-                    HttpStatus.UNAUTHORIZED);
-        }
-        UserDetails userDetails = userService.loadUserByUsername(authRequest.getEmail());
-        String token = jwtTokenUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return authService.login(authRequest);
     }
 
     @PostMapping("/register")
     public UserDTO registerUser(@Valid @RequestBody final RegisterUserDTO registerUserDTO){
-        User user = new User();
-        user.setEmail(registerUserDTO.getEmail());
-        user.setFirstName(registerUserDTO.getFirstName());
-        user.setLastName(registerUserDTO.getLastName());
-        user.setBirthday(registerUserDTO.getBirthday());
-        user.setPhone(registerUserDTO.getPhone());
-        user.setCity(registerUserDTO.getCity());
-        user.setCountry(registerUserDTO.getCountry());
-        user.setCredential(new Credential(passwordEncoder.encode(registerUserDTO.getPassword())));
-        return mapper.map(userService.save(user), UserDTO.class);
+        return mapper.map(authService.saveUser(authService.register(registerUserDTO)), UserDTO.class);
     }
 }
