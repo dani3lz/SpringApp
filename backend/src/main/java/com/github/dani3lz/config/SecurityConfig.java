@@ -16,8 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.security.AuthProvider;
-
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -29,11 +27,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/users/info").authenticated()
                 .antMatchers("/users/**").hasRole("ADMIN")
-                .antMatchers("/role/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
