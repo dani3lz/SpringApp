@@ -1,56 +1,67 @@
 package com.github.dani3lz.service;
 
-import com.github.dani3lz.model.Users;
-import com.github.dani3lz.model.dto.UsersDTO;
+import com.github.dani3lz.model.Role;
+import com.github.dani3lz.model.User;
+import com.github.dani3lz.model.dto.UserDTO;
+import com.github.dani3lz.repository.RoleRepository;
 import com.github.dani3lz.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements Validator {
+public class UserService implements Validator, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper mapper;
 
-    public List<UsersDTO> getAll() {
-        List<UsersDTO> usersDTOList = new ArrayList<>();
-        userRepository.findAll().forEach(user -> usersDTOList.add(mapper.map(user, UsersDTO.class)));
-        return usersDTOList;
+    public List<User> getAll() {
+        List<User> userList = new ArrayList<>();
+        userRepository.findAll().forEach(userList::add);
+        return userList;
     }
 
-    public UsersDTO getByEmail(String email) {
-        Optional<Users> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return mapper.map(user.get(), UsersDTO.class);
-        } else {
-            throw new RuntimeException("Not found");
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email."));
+    }
+
+    public User save(User user) {
+        if (validate(mapper.map(user, UserDTO.class))) {
+            if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
+                user.setRoles(new HashSet<>(Collections.singletonList(roleRepository.findByName("ROLE_USER")
+                        .orElseThrow(() -> new RuntimeException("This role not exists")))));
+                return userRepository.save(user);
+            }
+            throw new RuntimeException("User with this email already exists.");
         }
+        throw new RuntimeException("All fields are required.");
     }
 
-    public UsersDTO save(Users user) {
-        return mapper.map(userRepository.save(user), UsersDTO.class);
-    }
-
-    public UsersDTO edit(String email, UsersDTO usersDTO) {
-        if(validate(usersDTO)) {
-            Optional<Users> userFromDB = userRepository.findByEmail(email);
-            Optional<Users> checkIfEmailIsNotOccupied = userRepository.findByEmail(usersDTO.getEmail());
+    public User edit(String email, UserDTO userDTO) {
+        if (validate(userDTO)) {
+            Optional<User> userFromDB = userRepository.findByEmail(email);
+            Optional<User> checkIfEmailIsNotOccupied = email.equals(userDTO.getEmail()) ? Optional.empty() : userRepository.findByEmail(userDTO.getEmail());
             if (userFromDB.isPresent() && !checkIfEmailIsNotOccupied.isPresent()) {
-                Users user = userFromDB.get();
-                user.setEmail(usersDTO.getEmail());
-                user.setFirstName(usersDTO.getFirstName());
-                user.setLastName(usersDTO.getLastName());
-                user.setBirthday(usersDTO.getBirthday());
-                user.setPhone(usersDTO.getPhone());
-                user.setCountry(usersDTO.getCountry());
-                user.setCity(usersDTO.getCity());
-                return usersDTO;
+                User user = userFromDB.get();
+                user.setEmail(userDTO.getEmail());
+                user.setFirstName(userDTO.getFirstName());
+                user.setLastName(userDTO.getLastName());
+                user.setBirthday(userDTO.getBirthday());
+                user.setPhone(userDTO.getPhone());
+                user.setCountry(userDTO.getCountry());
+                user.setCity(userDTO.getCity());
+                return user;
             } else {
                 throw new RuntimeException("Email is occupied.");
             }
@@ -59,24 +70,53 @@ public class UserService implements Validator {
         }
     }
 
-    public UsersDTO delete(String email) {
-        Optional<Users> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            userRepository.delete(user.get());
-            return mapper.map(user.get(), UsersDTO.class);
+    public String delete(String email) {
+        userRepository.delete(userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email.")));
+        return "User was deleted successfully.";
+    }
+
+    public User changeRole(String email, String newRole) {
+        User user = findByEmail(email);
+        user.setRoles(new HashSet<>(Collections.singletonList(roleRepository.findByName(newRole)
+                .orElseThrow(() -> new RuntimeException("This role not exists.")))));
+        return userRepository.save(user);
+    }
+
+    public String createRole(String role){
+        if(roleRepository.findByName(role).isPresent()){
+            return String.format("Role: '%s' already exists.", role);
         } else {
-            throw new RuntimeException("Not found");
+            roleRepository.save(new Role(role));
+            return String.format("Role: '%s' was created successfully.", role);
         }
     }
 
     @Override
-    public boolean validate(UsersDTO usersDTO) {
-        return !usersDTO.getEmail().trim().isEmpty() &&
-                !usersDTO.getFirstName().trim().isEmpty() &&
-                !usersDTO.getLastName().trim().isEmpty() &&
-                !usersDTO.getPhone().trim().isEmpty() &&
-                !usersDTO.getBirthday().trim().isEmpty() &&
-                !usersDTO.getCity().trim().isEmpty() &&
-                !usersDTO.getCountry().trim().isEmpty();
+    public boolean validate(UserDTO userDTO) {
+        return !userDTO.getEmail().trim().isEmpty() &&
+                !userDTO.getFirstName().trim().isEmpty() &&
+                !userDTO.getLastName().trim().isEmpty() &&
+                !userDTO.getPhone().trim().isEmpty() &&
+                !userDTO.getBirthday().trim().isEmpty() &&
+                !userDTO.getCity().trim().isEmpty() &&
+                !userDTO.getCountry().trim().isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found with this email."));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getCredential()
+                        .getPassword(),
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .collect(Collectors.toList())
+        );
     }
 }

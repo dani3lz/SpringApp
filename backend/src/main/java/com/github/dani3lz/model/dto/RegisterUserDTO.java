@@ -1,21 +1,20 @@
 package com.github.dani3lz.model.dto;
 
 import com.sun.istack.NotNull;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class UsersDTO {
+public class RegisterUserDTO {
+    @NotNull
+    String email;
+    @NotNull
+    String password;
     @NotNull
     String firstName;
     @NotNull
     String lastName;
-    @NotNull
-    String email;
     @NotNull
     String birthday;
     @NotNull

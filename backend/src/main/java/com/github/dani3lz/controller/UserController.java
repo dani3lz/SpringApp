@@ -1,13 +1,18 @@
 package com.github.dani3lz.controller;
 
-import com.github.dani3lz.model.Users;
-import com.github.dani3lz.model.dto.UsersDTO;
+import com.github.dani3lz.model.Role;
+import com.github.dani3lz.model.User;
+import com.github.dani3lz.model.dto.UserDTO;
 import com.github.dani3lz.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,32 +22,45 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
+    private final ModelMapper mapper;
 
     @GetMapping
-    public List<UsersDTO> getAll(){
-        return userService.getAll();
+    public List<UserDTO> getAll() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        userService.getAll().forEach(user -> userDTOList.add(mapper.map(user, UserDTO.class)));
+        return userDTOList;
     }
 
     @GetMapping("/{email}")
-    public UsersDTO getByEmail(@PathVariable("email") final String email){
-        return userService.getByEmail(email);
-    }
-
-    @PostMapping
-    public UsersDTO save(@Valid @RequestBody final Users user){
-        return userService.save(user);
+    public UserDTO getByEmail(@PathVariable("email") final String email) {
+        return mapper.map(userService.findByEmail(email), UserDTO.class);
     }
 
     @PutMapping("/{email}")
-    public UsersDTO edit(@PathVariable final String email,
-                         @Valid @RequestBody final UsersDTO usersDTO){
-        return userService.edit(email, usersDTO);
+    public UserDTO edit(@PathVariable final String email,
+                        @Valid @RequestBody final UserDTO userDTO) {
+        return mapper.map(userService.edit(email, userDTO), UserDTO.class);
     }
 
     @DeleteMapping("/{email}")
-    public UsersDTO delete(@PathVariable("email") final String email){
+    public String delete(@PathVariable("email") final String email) {
         return userService.delete(email);
+    }
+
+    @GetMapping("/info")
+    public String userData(Principal principal) {
+        return principal.getName();
+    }
+
+    @PutMapping("/{email}/role")
+    public ResponseEntity<UserDTO> changeRole(@PathVariable(name = "email") final String email,
+                                              @RequestBody final Role newRole) {
+        return ResponseEntity.ok(mapper.map(userService.changeRole(email, newRole.getName()), UserDTO.class));
+    }
+
+    @PostMapping("/role")
+    public String createRole(@RequestBody final Role role){
+        return userService.createRole(role.getName());
     }
 }
