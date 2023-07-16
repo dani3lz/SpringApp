@@ -1,13 +1,10 @@
 package com.github.dani3lz.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -40,8 +37,10 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String country;
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    @JsonBackReference
+    private Country country;
 
     @Column(nullable = false)
     private String city;
@@ -54,13 +53,12 @@ public class User {
     )
     private Set<Role> roles;
 
-    public User(String email, String firstName, String lastName, String birthday, String phone, String country, String city) {
+    public User(String email, String firstName, String lastName, String birthday, String phone, String city) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
-        this.country = country;
         this.city = city;
     }
 }

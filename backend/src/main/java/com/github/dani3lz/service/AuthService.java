@@ -3,14 +3,12 @@ package com.github.dani3lz.service;
 import com.github.dani3lz.exception.AppError;
 import com.github.dani3lz.model.Credential;
 import com.github.dani3lz.model.User;
-import com.github.dani3lz.model.dto.JwtRequest;
-import com.github.dani3lz.model.dto.JwtResponse;
-import com.github.dani3lz.model.dto.RegisterUserDTO;
-import com.github.dani3lz.model.dto.UserDTO;
+import com.github.dani3lz.model.dto.*;
 import com.github.dani3lz.repository.UserRepository;
 import com.github.dani3lz.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +36,7 @@ public class AuthService implements UserDetailsService, Validator {
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
     private final ModelMapper mapper;
+    private final CountryService countryService;
 
     public ResponseEntity<?> login(JwtRequest authRequest){
         try {
@@ -62,9 +62,9 @@ public class AuthService implements UserDetailsService, Validator {
         user.setBirthday(registerUserDTO.getBirthday());
         user.setPhone(registerUserDTO.getPhone());
         user.setCity(registerUserDTO.getCity());
-        user.setCountry(registerUserDTO.getCountry());
+        user.setCountry(countryService.findByName(registerUserDTO.getCountry()));
         user.setCredential(new Credential(passwordEncoder.encode(registerUserDTO.getPassword())));
-        return user;
+        return saveUser(user);
     }
 
     public User saveUser(User user) {
@@ -86,7 +86,7 @@ public class AuthService implements UserDetailsService, Validator {
                 !userDTO.getPhone().trim().isEmpty() &&
                 !userDTO.getBirthday().trim().isEmpty() &&
                 !userDTO.getCity().trim().isEmpty() &&
-                !userDTO.getCountry().trim().isEmpty();
+                Objects.nonNull(userDTO.getCountryDTO());
     }
 
     @Override

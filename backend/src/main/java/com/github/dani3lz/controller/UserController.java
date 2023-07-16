@@ -1,7 +1,9 @@
 package com.github.dani3lz.controller;
 
 import com.github.dani3lz.model.Role;
+import com.github.dani3lz.model.dto.CountryDTO;
 import com.github.dani3lz.model.dto.UserDTO;
+import com.github.dani3lz.service.CountryService;
 import com.github.dani3lz.service.RoleService;
 import com.github.dani3lz.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
+    private final CountryService countryService;
     private final ModelMapper mapper;
 
     @GetMapping
@@ -68,4 +71,10 @@ public class UserController {
     public String deleteRole(@RequestBody final Role role){
         return roleService.deleteRole(role.getName());
     }
+
+    @GetMapping("/countries")
+    public List<CountryDTO> getAllCountries(){
+        return countryService.findAllCountries();
+    }
+
 }

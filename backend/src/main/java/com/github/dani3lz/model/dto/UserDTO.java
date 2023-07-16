@@ -4,7 +4,6 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
@@ -19,7 +18,7 @@ public class UserDTO {
     @NotNull
     String phone;
     @NotNull
-    String country;
+    CountryDTO countryDTO;
     @NotNull
     String city;
 }
