@@ -9,7 +9,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
 import java_logo from './img/java_logo.png'
 import react_logo from './img/react_logo.png'
-import { getAuthToken, deleteAuthToken } from '../axios_helper'
+import { getAuthToken, deleteAuthToken, checkAuthToken } from '../axios_helper'
 
 export default function MyAppBar() {
 
@@ -35,8 +35,8 @@ export default function MyAppBar() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
+    if (checkAuthToken()) {
+      const token = getAuthToken();
       const decodedJwt = parseJwt(token);
       if (decodedJwt.exp * 1000 < Date.now()) {
         deleteAuthToken();
@@ -66,7 +66,7 @@ export default function MyAppBar() {
             <img src={react_logo} alt='React JS' style={{ height: '30px', marginRight: '5px', marginBottom: '0px', marginLeft: '5px' }} />
             <span>React JS</span>
           </Typography>
-          {getAuthToken() !== null && getAuthToken() !== "null"
+          {checkAuthToken()
             ? <Button onClick={routeChangeToLogout} color="inherit">Logout</Button>
             : <Button onClick={routeChangeToLogin} color="inherit">Login</Button>
           }

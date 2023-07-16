@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { request } from '../axios_helper'
 
 const columns = [
-  { field: 'number', headerName: 'Nr.', width: 90 },
+  { field: 'number', headerName: 'Nr.', width: 60 },
   { field: 'email', headerName: 'Email', width: 200 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'firstName', headerName: 'First name', width: 120 },
+  { field: 'lastName', headerName: 'Last name', width: 120 },
   { field: 'birthday', headerName: 'Birthday', width: 130 },
   { field: 'phone', headerName: 'Phone', width: 130 },
-  { field: 'country', headerName: 'Country', width: 150 },
+  { field: 'country', headerName: 'Country', width: 200 },
   { field: 'city', headerName: 'City', width: 140 },
 ];
 
@@ -27,18 +27,18 @@ export default function CustomTable() {
       "/users",
       {}
     ).then((response) => {
-      setUsers(response.data)
+      setUsers(response.data);
     }).catch((error) => {
       console.error("Error fetching users");
       setUsers([]);
     });
   }, [seed])
 
-  const rows = users;
-
-  for (let i = 0; i < rows.length; i++) {
-    rows[i].number = i + 1;
+  for (let i = 0; i < users.length; i++) {
+    users[i].number = i + 1;
+    users[i].country = users[i].countryDTO["nicename"];
   }
+  delete users["countryDTO"];
 
   const navigate = useNavigate();
 
@@ -78,11 +78,11 @@ export default function CustomTable() {
       <Paper elevation={3} style={paperStyle}>
         <div style={{ height: '70vh', width: '100%' }}>
           <DataGrid
-            rows={rows}
+            rows={users}
 
             onRowSelectionModelChange={(ids) => {
               const selectedIDs = new Set(ids);
-              const selectedRowData = rows.filter((row) =>
+              const selectedRowData = users.filter((row) =>
                 selectedIDs.has(row.number)
               );
               setSelectedRows(selectedRowData);
