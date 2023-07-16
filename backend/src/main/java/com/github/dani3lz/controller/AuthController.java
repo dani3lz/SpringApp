@@ -31,6 +31,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public UserDTO registerUser(@Valid @RequestBody final RegisterUserDTO registerUserDTO){
+        System.out.println(registerUserDTO);
         return mapper.map(authService.register(registerUserDTO), UserDTO.class);
     }
 }

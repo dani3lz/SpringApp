@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CountryDTO {
-    private String iso;
+    /*private String iso;
     private String name;
-    private String nicename;
     private String iso3;
-    private String numcode;
+    private String numcode;*/
+    private String nicename;
     private String phonecode;
 }

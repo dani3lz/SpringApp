@@ -28,6 +28,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/users/countries").permitAll()
                 .antMatchers("/users/info").authenticated()
                 .antMatchers("/users/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
