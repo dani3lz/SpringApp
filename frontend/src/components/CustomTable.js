@@ -36,9 +36,7 @@ export default function CustomTable() {
 
   for (let i = 0; i < users.length; i++) {
     users[i].number = i + 1;
-    users[i].country = users[i].countryDTO["nicename"];
   }
-  delete users["countryDTO"];
 
   const navigate = useNavigate();
 

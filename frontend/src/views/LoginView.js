@@ -67,11 +67,16 @@ function LoginView() {
                     password: password
                 }
             ).then((response) => {
-                setAuthToken(response.data.token);
-                navigate('/');
+                if (response.ok) {
+                    setAuthToken(response.data.token);
+                    navigate('/');
+                } else {
+                    setErrorMessage(response.data.message);
+                    setErrorSnackBar(true);
+                }
             }).catch((error) => {
-                console.error("Error sending data");
-
+                setErrorMessage("Incorrect email or password.");
+                setErrorSnackBar(true);
             });
         }
     }
@@ -119,7 +124,7 @@ function LoginView() {
                     </FormControl>
                     <Button variant="contained" onClick={handleClick}>Submit</Button>
                     {
-                        <Snackbar open={errorSnackBar} autoHideDuration={10000} onClose={() => setErrorSnackBar(false)}>
+                        <Snackbar open={errorSnackBar} autoHideDuration={10000} style={{width: 'fit-content'}} onClose={() => setErrorSnackBar(false)}>
                             <Alert severity="error" sx={{ width: '100%' }}>
                                 {errorMessage}
                             </Alert>

@@ -14,7 +14,6 @@ function ProfileView() {
   const buttonStyle = { color: 'black', borderColor: '#dedede', borderRadius: '25px', float: 'right' };
 
   const [user, setUser] = useState([]);
-  const [country, setCountry] = useState("");
 
   useEffect(() => {
     request(
@@ -27,8 +26,6 @@ function ProfileView() {
         "/users/" + emailResponse.data,
         {}
       ).then((userResponse) => {
-        setCountry(userResponse.data.countryDTO["nicename"]);
-        delete userResponse.data["countryDTO"];
         setUser(userResponse.data)
       }).catch((error) => {
         console.error("Error getting user data");
@@ -111,7 +108,7 @@ function ProfileView() {
                     <span style={spanStyle}>City</span>
                   </Grid>
                   <Grid item xs={6}>
-                    <span style={spanInfoStyle}>{country}</span>
+                    <span style={spanInfoStyle}>{user.country}</span>
                   </Grid>
                   <Grid item xs={6}>
                     <span style={spanInfoStyle}>{user.city}</span>

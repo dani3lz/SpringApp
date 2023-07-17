@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,7 +9,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
 import java_logo from './img/java_logo.png'
 import react_logo from './img/react_logo.png'
-import { getAuthToken, deleteAuthToken, checkAuthToken } from '../axios_helper'
+import { checkAuthToken } from '../axios_helper'
+import MyProfileIcon from '../components/MyProfileIcon';
 
 export default function MyAppBar() {
 
@@ -21,30 +22,6 @@ export default function MyAppBar() {
   const routeChangeToHome = () => {
     navigate(`/`);
   }
-  const routeChangeToLogout = () => {
-    deleteAuthToken();
-    navigate(`/`);
-  }
-
-  const parseJwt = (token) => {
-    try {
-      return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    if (checkAuthToken()) {
-      const token = getAuthToken();
-      const decodedJwt = parseJwt(token);
-      if (decodedJwt.exp * 1000 < Date.now()) {
-        deleteAuthToken();
-        navigate(`/`);
-        console.log("Expired.")
-      }
-    }
-  }, [navigate]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -67,7 +44,7 @@ export default function MyAppBar() {
             <span>React JS</span>
           </Typography>
           {checkAuthToken()
-            ? <Button onClick={routeChangeToLogout} color="inherit">Logout</Button>
+            ? <MyProfileIcon/>
             : <Button onClick={routeChangeToLogin} color="inherit">Login</Button>
           }
         </Toolbar>

@@ -80,11 +80,14 @@ function RegisterView() {
     const [errorMessage, setErrorMessage] = useState("");
 
     function checkFields() {
-        const day = birthdayPicker._d.getDate();
-        const month = birthdayPicker._d.getMonth() + 1;
-        const year = birthdayPicker._d.getFullYear();
-        const date = day + "-" + month + "-" + year
-        const birthday = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY")
+        let birthday = "";
+        if (birthdayPicker instanceof moment) {
+            const day = birthdayPicker._d.getDate();
+            const month = birthdayPicker._d.getMonth() + 1;
+            const year = birthdayPicker._d.getFullYear();
+            const date = day + "-" + month + "-" + year
+            birthday = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY")
+        }
 
         const fields = [
             email,
@@ -218,7 +221,7 @@ function RegisterView() {
                         </Grid>
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DemoContainer components={['DatePicker', 'DatePicker']}>
+                                <DemoContainer components={['DatePicker']}>
                                     <DatePicker
                                         label="Birthday"
                                         value={birthdayPicker || null}
@@ -327,7 +330,7 @@ function RegisterView() {
                         <Grid item xs={24}>
                             <Button variant="contained" onClick={handleClick} style={{ width: '50%' }}>Submit</Button>
                             {
-                                <Snackbar open={errorSnackBar} autoHideDuration={10000} onClose={() => setErrorSnackBar(false)}>
+                                <Snackbar open={errorSnackBar} autoHideDuration={10000} style={{width: 'fit-content'}} onClose={() => setErrorSnackBar(false)}>
                                     <Alert severity="error" sx={{ width: '100%' }}>
                                         {errorMessage}
                                     </Alert>
