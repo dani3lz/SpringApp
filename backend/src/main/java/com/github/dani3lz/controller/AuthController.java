@@ -1,14 +1,11 @@
 package com.github.dani3lz.controller;
 
-import com.github.dani3lz.model.User;
-import com.github.dani3lz.model.dto.CountryDTO;
 import com.github.dani3lz.model.dto.JwtRequest;
 import com.github.dani3lz.model.dto.RegisterUserDTO;
 import com.github.dani3lz.model.dto.UserDTO;
 import com.github.dani3lz.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

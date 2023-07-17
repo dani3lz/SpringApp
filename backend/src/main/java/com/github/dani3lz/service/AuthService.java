@@ -3,12 +3,14 @@ package com.github.dani3lz.service;
 import com.github.dani3lz.exception.AppError;
 import com.github.dani3lz.model.Credential;
 import com.github.dani3lz.model.User;
-import com.github.dani3lz.model.dto.*;
+import com.github.dani3lz.model.dto.JwtRequest;
+import com.github.dani3lz.model.dto.JwtResponse;
+import com.github.dani3lz.model.dto.RegisterUserDTO;
+import com.github.dani3lz.model.dto.UserDTO;
 import com.github.dani3lz.repository.UserRepository;
 import com.github.dani3lz.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,7 +87,7 @@ public class AuthService implements UserDetailsService, Validator {
                 !userDTO.getPhone().trim().isEmpty() &&
                 !userDTO.getBirthday().trim().isEmpty() &&
                 !userDTO.getCity().trim().isEmpty() &&
-                Objects.nonNull(userDTO.getCountryDTO());
+                !userDTO.getCountry().trim().isEmpty();
     }
 
     @Override

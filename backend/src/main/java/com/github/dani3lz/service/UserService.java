@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,7 @@ public class UserService implements Validator, UserDetailsService {
                 user.setLastName(userDTO.getLastName());
                 user.setBirthday(userDTO.getBirthday());
                 user.setPhone(userDTO.getPhone());
-                user.setCountry(countryService.findByName(userDTO.getCountryDTO().getNicename()));
+                user.setCountry(countryService.findByName(userDTO.getCountry()));
                 user.setCity(userDTO.getCity());
                 return user;
             } else {
@@ -71,7 +70,7 @@ public class UserService implements Validator, UserDetailsService {
                 !userDTO.getPhone().trim().isEmpty() &&
                 !userDTO.getBirthday().trim().isEmpty() &&
                 !userDTO.getCity().trim().isEmpty() &&
-                Objects.nonNull(userDTO.getCountryDTO());
+                !userDTO.getCountry().trim().isEmpty();
     }
 
     @Override

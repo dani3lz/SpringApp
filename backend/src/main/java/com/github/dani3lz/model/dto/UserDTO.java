@@ -18,7 +18,7 @@ public class UserDTO {
     @NotNull
     String phone;
     @NotNull
-    CountryDTO countryDTO;
+    String country;
     @NotNull
     String city;
 }
